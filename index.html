@@ -124,13 +124,13 @@
 
     // Keyboard input handling
     document.addEventListener("keydown", function (event) {
-      if (event.key === "1") {
+      if (event.key === "q") {
         handleKeyPress(1);
-      } else if (event.key === "2") {
+      } else if (event.key === "w") {
         handleKeyPress(2);
-      } else if (event.key === "3") {
+      } else if (event.key === "o") {
         handleKeyPress(3);
-      } else if (event.key === "4") {
+      } else if (event.key === "p") {
         handleKeyPress(4);
       }
     });
@@ -148,7 +148,14 @@
       initializeChart();
       gameLoop();
     }
-
+    function addNote(time, lane) {
+  const note = { time: time, lane: lane };
+  chart.push(note);
+}
+    addNote(6666, 1)
+    addNote(6666, 2)
+    addNote(6666, 3)
+    addNote(6666, 4)
     // Call the startGame function to start the game
     startGame();
   </script>
