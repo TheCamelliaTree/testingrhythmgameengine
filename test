@@ -1,0 +1,141 @@
+// Constants
+const CHART_WIDTH = 800;
+const CHART_HEIGHT = 600;
+const NOTE_SIZE = 50;
+const NOTE_SPEED = 5;
+const SCORE_PER_NOTE = 100;
+const PERFECT_TIMING_WINDOW = 100;
+const GREAT_TIMING_WINDOW = 200;
+const LAGGING_TIMING_WINDOW = 300;
+
+// Game state
+let chart = [];
+let score = 0;
+let combo = 0;
+
+// Initialize the chart
+function initializeChart() {
+  chart = [
+    { time: 1000, lane: 1 },
+    { time: 2000, lane: 2 },
+    { time: 3000, lane: 3 },
+    { time: 4000, lane: 4 },
+    // Add more notes as needed
+  ];
+}
+
+// Handle key press
+function handleKeyPress(lane) {
+  let hitNote = null;
+
+  for (let i = 0; i < chart.length; i++) {
+    const note = chart[i];
+    if (note.lane === lane) {
+      const timeDifference = Math.abs(note.time - Date.now());
+      if (timeDifference <= PERFECT_TIMING_WINDOW) {
+        hitNote = chart.splice(i, 1)[0];
+        updateScore(SCORE_PER_NOTE, "Perfect");
+        break;
+      } else if (timeDifference <= GREAT_TIMING_WINDOW) {
+        hitNote = chart.splice(i, 1)[0];
+        updateScore(SCORE_PER_NOTE, "Great");
+        break;
+      } else if (timeDifference <= LAGGING_TIMING_WINDOW) {
+        hitNote = chart.splice(i, 1)[0];
+        updateScore(SCORE_PER_NOTE, "Lagging");
+        break;
+      }
+    }
+  }
+
+  if (!hitNote) {
+    updateCombo(true, "ERROR");
+  }
+}
+
+// Update game logic
+function update() {
+  // Move the notes
+  for (let i = 0; i < chart.length; i++) {
+    chart[i].time -= NOTE_SPEED;
+
+    // Check if a note is missed
+    if (chart[i].time < 0) {
+      chart.splice(i, 1);
+      updateCombo(true, "ERROR");
+      break;
+    }
+  }
+}
+
+// Update the score
+function updateScore(value, timing) {
+  score += value;
+  console.log("Score:", score, "(" + timing + ")");
+}
+
+// Update the combo
+function updateCombo(reset = false, timing) {
+  if (reset) {
+    combo = 0;
+    console.log("Combo reset", "(" + timing + ")");
+  } else {
+    combo++;
+    console.log("Combo:", combo, "(" + timing + ")");
+  }
+}
+
+// Render the game
+function render() {
+  // Clear the chart
+  clearChart();
+
+  // Draw the notes
+  for (let i = 0; i < chart.length; i++) {
+    const note = chart[i];
+    const x = (note.lane - 1) * CHART_WIDTH / 4;
+    const y = (note.time / 1000) * CHART_HEIGHT / 5;
+
+    drawNote(x, y);
+  }
+}
+
+// Clear the chart
+function clearChart() {
+  // Code to clear the chart canvas
+}
+
+// Draw a note
+function drawNote(x, y) {
+  // Code to draw a note at the specified position
+}
+
+// Keyboard input handling
+document.addEventListener("keydown", function (event) {
+  if (event.key === "1") {
+    handleKeyPress(1);
+  } else if (event.key === "2") {
+    handleKeyPress(2);
+  } else if (event.key === "3") {
+    handleKeyPress(3);
+  } else if (event.key === "4") {
+    handleKeyPress(4);
+  }
+});
+
+// Game loop
+function gameLoop() {
+  update();
+  render();
+
+  requestAnimationFrame(gameLoop);
+}
+
+// Start the game
+function startGame() {
+  initializeChart();
+  gameLoop();
+}
+
+// Call the startGame function to start the game
+startGame();
